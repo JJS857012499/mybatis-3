@@ -40,6 +40,7 @@ public class TransactionalCache implements Cache {
   private static final Log log = LogFactory.getLog(TransactionalCache.class);
 
   private final Cache delegate;
+  /** 提交的时候，是否清除 */
   private boolean clearOnCommit;
   private final Map<Object, Object> entriesToAddOnCommit;
   private final Set<Object> entriesMissedInCache;
@@ -70,6 +71,8 @@ public class TransactionalCache implements Cache {
     }
     // issue #146
     if (clearOnCommit) {
+      //如果在提交时清除，获取到的值，可能当前做了修改，获取的值有可能是错的；
+      //再者，如果设置了提交时清除，既然做了清除处理，也不应该get到值。
       return null;
     } else {
       return object;
